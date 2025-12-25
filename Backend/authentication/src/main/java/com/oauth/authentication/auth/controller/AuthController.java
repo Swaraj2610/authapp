@@ -11,6 +11,7 @@ import com.oauth.authentication.auth.repository.UserRepository;
 import com.oauth.authentication.auth.service.AuthService;
 import com.oauth.authentication.security.CookieService;
 import com.oauth.authentication.security.JwtService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,7 +49,7 @@ public class AuthController {
     private final ModelMapper modelMapper;
     private final RefreshTokenRepo refreshTokenRepo;
     private final CookieService cookieService;
-//    private final RefreshTokenRepo refreshTokenRepo;
+    private final Logger logger= LoggerFactory.getLogger(AuthController.class);
     @PostMapping("/register")
     public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDto userDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerUser(userDto));
@@ -108,13 +111,16 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @PostMapping("/refreshToken")
-    public ResponseEntity<TokenResponse> renewRefreshToken(@CookieValue("refreshToken") String refreshTokenInp,
+    public ResponseEntity<TokenResponse> renewRefreshToken(@RequestBody RefreshTokenRequest tokenRequest,
                                                            HttpServletRequest request,
                                                            HttpServletResponse response){
-        String refreshToken=redRefreshTokenFromRequest(refreshTokenInp,request).orElseThrow(()-> new BadCredentialsException("refresh token missing"));
+        String refreshToken=redRefreshTokenFromRequest(tokenRequest.refreshToken(),request).orElseThrow(()-> new BadCredentialsException("refresh token missing"));
         if(!jwtService.isRefreshToken(refreshToken))throw new BadCredentialsException("Invalid Refresh Token Type");
-
-        String jti=jwtService.getJti(refreshToken);
+        logger.info("Refresh token : {}",refreshToken);
+        logger.info("Refresh token body: {}", jwtService.extractClaims(refreshToken).toString());
+        Claims claims= jwtService.extractClaims(refreshToken);
+        String jti=claims.getId();
+        logger.info("Refresh JTI: {}", jti);
         UUID uuid=jwtService.getUserId(refreshToken);
 
        RefreshToken storedToken= refreshTokenRepo.findByJti(jti)
@@ -143,20 +149,24 @@ public class AuthController {
         String newRefreshToken= jwtService.refreshToken(user,newJti);
         cookieService.attachRefreshCookie(response,newRefreshToken,(int) jwtService.getRefreshTtlSeconds());
         cookieService.addNoHeaders(response);
+
         return ResponseEntity.ok(TokenResponse.of(newAccessToken, newRefreshToken, jwtService.getAccessTtlSeconds(),modelMapper.map(user, UserDto.class)));
     }
 
-    private Optional<String> redRefreshTokenFromRequest(String refreshTokenInp, HttpServletRequest request) {
+    private Optional<String> redRefreshTokenFromRequest( String refreshTokenInp, HttpServletRequest request) {
+        if(StringUtils.hasText(refreshTokenInp)){
+            return Optional.of(refreshTokenInp);
+        }
         if(request.getCookies()!=null){
-           return Arrays.stream(request.getCookies())
+           Optional<String> cookieToken= Arrays.stream(request.getCookies())
                     .filter(cookie-> cookieService.getRefreshTokenCookieName().equals(cookie.getName()))
                     .map(Cookie::getValue)
                     .filter(StringUtils::hasText)
                     .findFirst();
+           logger.info("Cookie token : {}",cookieToken);
+           return cookieToken;
         }
-       if(StringUtils.hasText(refreshTokenInp)){
-        return Optional.of(refreshTokenInp);
-       }
+
        return Optional.empty();
     }
 

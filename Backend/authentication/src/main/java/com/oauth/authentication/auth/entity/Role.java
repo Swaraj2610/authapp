@@ -8,16 +8,17 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "user_roles", schema = "auth_login")
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Entity
-@Table(name = "user_roles", schema ="auth_login" )
+@Builder
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "role_id",nullable = false)
+    @Column(name = "role_id")
     private UUID id;
-    @Column(unique = true,nullable = false)
-    private String name;
+    private String name="ROLE_USER";
 }

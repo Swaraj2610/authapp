@@ -15,6 +15,7 @@ import java.util.*;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Data
+@ToString
 @Builder
 @Entity
 @Table(name = "auth_user",schema = "auth_login")
@@ -25,9 +26,9 @@ public class User implements UserDetails {
     private UUID id;
     @Column(name="user_email",nullable = false,unique = true ,length = 300)
     private String email;
-    @Column(name="user_name",nullable = false,unique = true ,length = 500)
+    @Column(name="user_name",nullable = false,length = 500)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
     private String image;
     @Column(nullable = false)
@@ -36,14 +37,17 @@ public class User implements UserDetails {
     private Instant updatedAt=Instant.now();
     @Enumerated(EnumType.STRING)
     private Provider provide=Provider.LOCAL;
+    private String providerId;
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_roles",
-        schema = "auth_login",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "user_roles",
+            schema = "auth_login",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles=new HashSet<>();
+    @Column(nullable = true)
+    private Set<Role> roles = new HashSet<>();
+
 
     @PrePersist
     protected void onCreate() {
@@ -58,7 +62,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
+        if (roles == null) {
+            return List.of();   // ✅ safe, no roles
+        }
         return roles
                 .stream()
                 .map(role->new SimpleGrantedAuthority(role.getName()))

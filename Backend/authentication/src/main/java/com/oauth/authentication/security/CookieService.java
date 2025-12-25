@@ -53,7 +53,7 @@ public class CookieService {
        }
 
        var responseCookie=responseCookieBuilder.build();
-
+        logger.info("cookie resp: {}",responseCookie.toString());
        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 
@@ -69,6 +69,7 @@ public class CookieService {
             responseCookieBuilder.domain(cookieDomain);
         }
         var responseCookie=responseCookieBuilder.build();
+//        logger.info("cookie resp: {}",responseCookie.toString());
         httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, responseCookie.toString());
     }
 

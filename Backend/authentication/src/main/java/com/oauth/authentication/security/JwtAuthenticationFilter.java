@@ -40,16 +40,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String header=request.getHeader(HttpHeaders.AUTHORIZATION);
-//        logger.info("Authentication header: {}",header);
+        logger.info("Authentication header: {}",header);
+        System.out.println(header);
         try {
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-//            logger.info("Authentication token: {}",token);
-            if(!jwtService.isAccessToken(token) || jwtService.isTokenExpired(token) ) {
-                filterChain.doFilter(request,response);
+            logger.info("Authentication token: {}",token);
+            System.out.println(token);
+            if (token.startsWith("{") || token.contains("accessToken")) {
+                logger.warn("Invalid Authorization header format");
+                filterChain.doFilter(request, response);
                 return;
             }
-
             UUID uuid = UserHelper.parseUUID(jwtService.extractClaims(token).getSubject());
             userRepository.findById(uuid).ifPresent(user -> {
                 if(user.isEnable()) {
@@ -80,6 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return request.getRequestURI().startsWith("/api/v1/auth");
+        String path = request.getServletPath();
+        return path.startsWith("/oauth2/")
+                || path.startsWith("/login/oauth2/");
     }
 }
