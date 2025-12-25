@@ -51,13 +51,14 @@ public class AuthController {
     private final CookieService cookieService;
     private final Logger logger= LoggerFactory.getLogger(AuthController.class);
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> registerUser(@RequestBody UserDto userDto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.registerUser(userDto));
     }
 
 
     @PostMapping("/login")
     public ResponseEntity<TokenResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        logger.info("request body : {}",loginRequest.toString());
         Authentication authentication = authenticate(loginRequest);
         if (!authentication.isAuthenticated()) throw new BadCredentialsException("User not authenticated");
         User user = userRepository.findByEmail(loginRequest.email()).orElseThrow(() -> new BadCredentialsException("Invalid Username or Password"));
@@ -82,7 +83,7 @@ public class AuthController {
     private Authentication authenticate(LoginRequest loginRequest) {
         try {
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                    loginRequest.email(), loginRequest.passowrd()
+                    loginRequest.email(), loginRequest.password()
             ));
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid Username or Password");

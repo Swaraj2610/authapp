@@ -1,11 +1,17 @@
-import { motion , type Variants } from "framer-motion";
-import { Card, CardContent, CardHeader } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Separator } from "../components/ui/separator";
-import { Github, Mail, Lock } from "lucide-react";
-import { NavLink } from "react-router";
+import { motion, type Variants } from "framer-motion";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Github, Mail, Lock, AlertCircleIcon } from "lucide-react";
+import { NavLink, useNavigate } from "react-router";
+import { useState } from "react";
+import type LoginData from "@/models/LoginData";
+import toast from "react-hot-toast";
+import { loginUser } from "@/services/Authservice";
+import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 
 /* ================= Motion ================= */
 
@@ -25,9 +31,61 @@ const card: Variants = {
       ease: [0.16, 1, 0.3, 1], // cubic-bezier (easeOut)
     },
   },
-}
+};
 
 export default function Login() {
+  const [loginData, setLoginData] = useState<LoginData>({
+    email: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<any>(null);
+  // input handler
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginData({
+      ...loginData,
+      [event.target.name]: event.target.value,
+    });
+  };
+
+const navigation = useNavigate();
+
+  const handleFormSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    console.log(loginData);
+
+    if( loginData.email.trim() === ""){
+      toast.error("Please enter your email.");
+      return;
+    }
+    if( loginData.password.trim() === ""){
+      toast.error("Please enter your password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const result=await loginUser(loginData);
+      console.log("login successful",result);
+      toast.success("Login successful !");
+      setLoginData({
+        email:"",
+        password:""
+      }); 
+      navigation("/dashboard");
+    } catch (error) {
+      console.log(error);
+      toast.error("Login failed ! Please try again.");
+      
+        setError(error);
+      
+    }
+    finally{
+      setLoading(false);
+    }
+  };
+
   return (
     <motion.main
       variants={page}
@@ -74,71 +132,87 @@ export default function Login() {
             <h1 className="text-2xl font-semibold tracking-tight">
               Welcome Back
             </h1>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground" >
               Securely access your account
             </p>
+
           </CardHeader>
+            {error && (
+                <Alert variant={"destructive"} className="mt-6 ml-4 border-transparent">
+                  <AlertCircleIcon />
+                  <AlertTitle>{
+                  error?.response ? error?.response?.data?.message:"Something went wrong ! Please try again later."
+                  }</AlertTitle>
+                </Alert> 
+            )}
 
           <CardContent className="px-6 pb-8 pt-5">
             <div className="space-y-5">
               {/* ===== Email ===== */}
-              <div className="space-y-1.5">
-                <Label>Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    className="
+              <form onSubmit={handleFormSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label>Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      className="
                       h-10 pl-10
                       focus-visible:ring-primary/40
                     "
-                  />
+                      name="email"
+                      value={loginData.email}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* ===== Password ===== */}
-              <div className="space-y-1.5">
-                <Label>Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="password"
-                    placeholder="••••••••"
-                    className="
+                {/* ===== Password ===== */}
+                <div className="space-y-1.5">
+                  <Label>Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      type="password"
+                      placeholder="••••••••"
+                      className="
                       h-10 pl-10
                       focus-visible:ring-primary/40
                     "
-                  />
+                      name="password"
+                      value={loginData.password}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* ===== Login Button (Premium Hover) ===== */}
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative group"
-              >
-                {/* Hover glow */}
-                <span
-                  className="
+                {/* ===== Login Button (Premium Hover) ===== */}
+                <motion.div
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative group"
+                >
+                  {/* Hover glow */}
+                  <span
+                    className="
                     absolute inset-0 rounded-md
                     bg-linear-to-r from-primary/40 to-primary/10
                     opacity-0 group-hover:opacity-100
                     blur-md transition-opacity
                   "
-                />
-                <Button
-                  className=" cursor-pointer
+                  />
+                  <Button disabled={loading}
+                    type="submit"
+                    className=" cursor-pointer
                     relative z-10
                     w-full h-10 text-sm
                     transition-all
-                  "
-                >
-                  Sign In
-                </Button>
-              </motion.div>
-
+                  ">
+                    {loading ? <><Spinner /> Please wait...</> : "Login"}
+                  </Button>
+                </motion.div>
+              </form>
               {/* ===== Divider ===== */}
               <div className="relative py-1">
                 <Separator />

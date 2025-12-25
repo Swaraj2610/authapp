@@ -20,14 +20,14 @@ public class GlobalExceptionHandler {
     private final Logger logger= LoggerFactory.getLogger(GlobalExceptionHandler.class);
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(ResourceNotFoundException exception){
-      ErrorResponse errorResponse= new ErrorResponse(HttpStatus.NOT_FOUND,exception.getMessage(),exception.getClass().getSimpleName(), LocalDateTime.now());
+      ErrorResponse errorResponse= new ErrorResponse(HttpStatus.NOT_FOUND,exception.getClass().getSimpleName(),exception.getMessage(), LocalDateTime.now());
       return ResponseEntity.status(404).body(errorResponse);
     }
 
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentExceptionException(IllegalArgumentException exception){
-        ErrorResponse errorResponse= new ErrorResponse(HttpStatus.BAD_REQUEST,exception.getMessage(),exception.getClass().getSimpleName(), LocalDateTime.now());
+        ErrorResponse errorResponse= new ErrorResponse(HttpStatus.BAD_REQUEST,exception.getClass().getSimpleName(),exception.getMessage(), LocalDateTime.now());
         return ResponseEntity.badRequest().body(errorResponse);
     }
 
