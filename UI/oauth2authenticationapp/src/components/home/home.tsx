@@ -1,19 +1,22 @@
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { ShieldCheck, Lock, Key, Cloud, Github, Chrome } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion ,type Variants } from "framer-motion";
 
 /* ================= ANIMATIONS ================= */
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 80, scale: 0.9 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut" },
+    scale: 1,
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1], // cubic-bezier (easeOut)
+    },
   },
-};
-
+}
 const stagger = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
@@ -57,7 +60,7 @@ export default function Home() {
       <motion.div
         className="
           absolute inset-0 -z-10
-          bg-gradient-to-r
+          bg-linear-to-r
           from-primary/20
           via-violet-500/20
           to-transparent
@@ -79,7 +82,7 @@ export default function Home() {
           className="text-5xl md:text-6xl font-bold tracking-tight"
         >
           Secure Authentication <br />
-          <span className="bg-gradient-to-r from-primary to-violet-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-primary to-violet-500 bg-clip-text text-transparent">
             Built for Modern Apps
           </span>
         </motion.h1>

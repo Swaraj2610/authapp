@@ -23,7 +23,7 @@ function Navbar() {
           <span
             className="
               inline-flex h-8 w-8 items-center justify-center rounded-lg
-              bg-gradient-to-br from-primary to-primary/40
+              bg-linear-to-r from-primary to-primary/40
               text-primary-foreground font-bold
               shadow-sm
             "
@@ -70,7 +70,7 @@ function Navbar() {
                 bg-primary text-primary-foreground
                 shadow-sm
                 transition-all duration-300
-                hover:-translate-y-[1px]
+                hover:-translate-y-px
                 hover:shadow-lg
                 hover:shadow-primary/30
                 focus-visible:ring-primary/50
@@ -109,7 +109,7 @@ function NavItem({ to, children }: { to: string; children: React.ReactNode }) {
             <motion.span
               layoutId="nav-underline"
               className="
-                absolute -bottom-1 left-0 right-0 h-[2px]
+                absolute -bottom-1 left-0 right-0 h-0.5
                 bg-primary rounded-full
               "
             />

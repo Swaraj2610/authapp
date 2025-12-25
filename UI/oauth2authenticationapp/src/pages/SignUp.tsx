@@ -1,6 +1,5 @@
-import React from "react"
 import { NavLink } from "react-router"
-import { motion } from "framer-motion"
+import { motion ,type Variants } from "framer-motion"
 import {
   Card,
   CardContent,
@@ -19,15 +18,19 @@ const page = {
   visible: { opacity: 1, transition: { duration: 0.45 } },
 }
 
-const card = {
-  hidden: { opacity: 0, y: 28, scale: 0.97 },
+const card: Variants = {
+  hidden: { opacity: 0, y: 80, scale: 0.9 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.55, ease: "easeOut" },
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1], // cubic-bezier (easeOut)
+    },
   },
 }
+
 
 const stagger = {
   visible: { transition: { staggerChildren: 0.08 } },
@@ -147,7 +150,7 @@ export default function Signup() {
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button className="w-full h-10">
+                <Button className="w-full h-10 cursor-pointer">
                   Create Account
                 </Button>
               </motion.div>
@@ -172,7 +175,7 @@ export default function Signup() {
                 <motion.div whileHover={{ y: -2 }}>
                   <Button
                     variant="outline"
-                    className="
+                    className=" cursor-pointer
                       h-10 w-full flex gap-2 text-sm
                       hover:border-primary hover:text-primary
                       transition-colors
@@ -191,7 +194,7 @@ export default function Signup() {
                 <motion.div whileHover={{ y: -2 }}>
                   <Button
                     variant="outline"
-                    className="
+                    className="cursor-pointer
                       h-10 w-full flex gap-2 text-sm
                       hover:border-primary hover:text-primary
                       transition-colors

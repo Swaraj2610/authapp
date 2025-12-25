@@ -1,5 +1,4 @@
-import React from "react";
-import { motion } from "framer-motion";
+import { motion , type Variants } from "framer-motion";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -15,15 +14,18 @@ const page = {
   visible: { opacity: 1, transition: { duration: 0.45 } },
 };
 
-const card = {
-  hidden: { opacity: 0, y: 28, scale: 0.97 },
+const card: Variants = {
+  hidden: { opacity: 0, y: 80, scale: 0.9 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { duration: 0.55, ease: "easeOut" },
+    transition: {
+      duration: 0.9,
+      ease: [0.16, 1, 0.3, 1], // cubic-bezier (easeOut)
+    },
   },
-};
+}
 
 export default function Login() {
   return (
@@ -54,7 +56,7 @@ export default function Login() {
           absolute inset-0 -z-10
           bg-[radial-gradient(circle_at_20%_20%,hsl(var(--primary)/0.25),transparent_55%),
               radial-gradient(circle_at_80%_70%,hsl(var(--primary)/0.18),transparent_60%)]
-          bg-[length:200%_200%]
+          bg-size-[200%_200%]
         "
       />
 
@@ -121,7 +123,7 @@ export default function Login() {
                 <span
                   className="
                     absolute inset-0 rounded-md
-                    bg-gradient-to-r from-primary/40 to-primary/10
+                    bg-linear-to-r from-primary/40 to-primary/10
                     opacity-0 group-hover:opacity-100
                     blur-md transition-opacity
                   "
