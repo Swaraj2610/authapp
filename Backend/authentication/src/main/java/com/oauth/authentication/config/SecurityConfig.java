@@ -4,10 +4,8 @@ package com.oauth.authentication.config;
 import com.oauth.authentication.auth.dto.ApiError;
 import com.oauth.authentication.security.JwtAuthenticationFilter;
 import com.oauth.authentication.security.OAuth2SuccessHandler;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,12 +47,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
-                                "/api/v1/auth/register",
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/refreshToken",
-                                "/api/v1/auth/logout",
-                                "/oauth2/**",
-                                "/login/oauth2/**"
+                              ApiEndpointConfig.AUTH_PUBLIC_URL
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -62,7 +55,6 @@ public class SecurityConfig {
                     oauth2.successHandler(oAuth2SuccessHandler)
                 )
                 .logout(AbstractHttpConfigurer::disable)
-//                .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
                         ((request, response, authException) -> {
                             response.setStatus(HttpStatus.UNAUTHORIZED.value());
