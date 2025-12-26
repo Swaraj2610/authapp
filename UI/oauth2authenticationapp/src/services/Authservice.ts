@@ -1,5 +1,6 @@
 import apiClient from "@/config/ApiClient";
 import type LoginData from "@/models/LoginData";
+import type LoginResponseData from "@/models/LoginResponseData";
 import type RegisterData from "@/models/RegisterData";
 
 
@@ -12,7 +13,12 @@ export const registerUser = async (signUpData: RegisterData) => {
 
 //login function
 export const loginUser=async(loginData:LoginData)=>{
-    console.log(loginData);
-    const response=await apiClient.post(`/auth/login`,loginData);
+    const response=await apiClient.post<LoginResponseData>(`/auth/login`,loginData);
+    return response.data;
+}
+
+//login function
+export const logout=async()=>{
+    const response=await apiClient.post<LoginResponseData>(`/auth/logout`);
     return response.data;
 }

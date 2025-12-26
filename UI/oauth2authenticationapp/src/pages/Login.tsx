@@ -9,9 +9,9 @@ import { NavLink, useNavigate } from "react-router";
 import { useState } from "react";
 import type LoginData from "@/models/LoginData";
 import toast from "react-hot-toast";
-import { loginUser } from "@/services/Authservice";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
+import useAuth from "@/auth/Store";
 
 /* ================= Motion ================= */
 
@@ -41,7 +41,8 @@ export default function Login() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
-  // input handler
+
+  // input handler for login form
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setLoginData({
       ...loginData,
@@ -49,39 +50,36 @@ export default function Login() {
     });
   };
 
-const navigation = useNavigate();
+  const navigation = useNavigate();
 
+  // login state from global store
+  const login = useAuth((state) => state.login);
   const handleFormSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     console.log(loginData);
 
-    if( loginData.email.trim() === ""){
+    if (loginData.email.trim() === "") {
       toast.error("Please enter your email.");
       return;
     }
-    if( loginData.password.trim() === ""){
+    if (loginData.password.trim() === "") {
       toast.error("Please enter your password.");
       return;
     }
-
     try {
       setLoading(true);
-      const result=await loginUser(loginData);
-      console.log("login successful",result);
+      await login(loginData);
       toast.success("Login successful !");
       setLoginData({
-        email:"",
-        password:""
-      }); 
+        email: "",
+        password: "",
+      });
       navigation("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       toast.error("Login failed ! Please try again.");
-      
-        setError(error);
-      
-    }
-    finally{
+      setError(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -132,19 +130,23 @@ const navigation = useNavigate();
             <h1 className="text-2xl font-semibold tracking-tight">
               Welcome Back
             </h1>
-            <p className="text-sm text-muted-foreground" >
+            <p className="text-sm text-muted-foreground">
               Securely access your account
             </p>
-
           </CardHeader>
-            {error && (
-                <Alert variant={"destructive"} className="mt-6 ml-4 border-transparent">
-                  <AlertCircleIcon />
-                  <AlertTitle>{
-                  error?.response ? error?.response?.data?.message:"Something went wrong ! Please try again later."
-                  }</AlertTitle>
-                </Alert> 
-            )}
+          {error && (
+            <Alert
+              variant={"destructive"}
+              className="mt-6 ml-4 border-transparent"
+            >
+              <AlertCircleIcon />
+              <AlertTitle>
+                {error?.response
+                  ? error?.response?.data?.message
+                  : "Something went wrong ! Please try again later."}
+              </AlertTitle>
+            </Alert>
+          )}
 
           <CardContent className="px-6 pb-8 pt-5">
             <div className="space-y-5">
@@ -202,14 +204,22 @@ const navigation = useNavigate();
                     blur-md transition-opacity
                   "
                   />
-                  <Button disabled={loading}
+                  <Button
+                    disabled={loading}
                     type="submit"
                     className=" cursor-pointer
                     relative z-10
                     w-full h-10 text-sm
                     transition-all
-                  ">
-                    {loading ? <><Spinner /> Please wait...</> : "Login"}
+                  "
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner /> Please wait...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </Button>
                 </motion.div>
               </form>

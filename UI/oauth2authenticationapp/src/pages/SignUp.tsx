@@ -103,7 +103,7 @@ const navigate=useNavigate();
       // redirect to login page
       navigate("/login");
 
-    } catch (error) {
+    } catch (error:any) {
       console.log(error)
       // setError(error);
       toast.error("Registration failed ! Please try again.");
