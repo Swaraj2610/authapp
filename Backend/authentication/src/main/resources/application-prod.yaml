@@ -1,2 +1,64 @@
 server:
-  port: 8083
+  port: 8082
+logging:
+  level:
+    org.springframework.security: info
+#  OAuth2 config
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:TEST-CLIENT-ID}
+            client-secret:  ${GOOGLE_CLIENT_SECRET:TEST-CLIENT-SECRET}
+            scope:
+              - openid
+              - profile
+              - email
+          #            redirect-uri: http://localhost:8082/login/oauth2/code/google
+          github:
+            client-id: ${GITHUB_CLIENT_ID:TEST-CLIENT-ID}
+            client-secret: ${GITHUB_CLIENT_SECRET:TEST-CLIENT-SECRET}
+            scope:
+              - read:user
+              - user:email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  datasource:
+    url: jdbc:postgresql://postgres:TDPjRKMwHqtqJqlbwYGwxfCcdJOJmGBP@interchange.proxy.rlwy.net:13591/railway
+    username: postgres
+    password: TDPjRKMwHqtqJqlbwYGwxfCcdJOJmGBP
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: HikariCP
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 10000000
+      validation-timeout: 5000
+      leak-detection-threshold: 0
+      initialization-fail-timeout: 1
+security:
+  jwt:
+    secret: ${JWT_SECRET:ejfghGFegfGEFUWFGEFGGHUHG8hvhvefhgjsrhgerjgfdbdfb;FJYGEFYGJHABFhjgefyjegfyuEFHAEFJHJBFARHGGKABHAHJSVFHEJSVFHJEHFVJHSAVCHJACdsgfsdyg$jsfbhfbdhj}
+    issuer: ${JWT_ISSUER:api.substring.com}
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:600}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:86400}
+    refresh-token-cookie-name: ${JWT_REFRESH_COOKIE_NAME:refreshToken}
+    cookie-secure: ${JWT_COOKIE_SECURE:true}
+    cookie-http-only: ${JWT_COOKIE_HTTP_ONLY:true}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:None}
+    cookie-domain: ${JWT_COOKIE_DOMAIN:}
+
+app:
+  cors:
+    ui-url: https://swarajreactauthapplication.netlify.app
+  auth:
+    frontend:
+      success-redirect: https://swarajreactauthapplication.netlify.app/oauth/success
+      failure-redirect: https://swarajreactauthapplication.netlify.app/oauth/failure
+
+
+
+

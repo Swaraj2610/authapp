@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8081
 logging:
   level:
     org.springframework.security: info
@@ -24,6 +24,22 @@ spring:
               - read:user
               - user:email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authapplicatiodb
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: HikariCP
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 10000000
+      validation-timeout: 5000
+      leak-detection-threshold: 0
+      initialization-fail-timeout: 1
+
 security:
   jwt:
     secret: ${JWT_SECRET:ejfghGFegfGEFUWFGEFGGHUHG8hvhvefhgjsrhgerjgfdbdfb;FJYGEFYGJHABFhjgefyjegfyuEFHAEFJHJBFARHGGKABHAHJSVFHEJSVFHJEHFVJHSAVCHJACdsgfsdyg$jsfbhfbdhj}

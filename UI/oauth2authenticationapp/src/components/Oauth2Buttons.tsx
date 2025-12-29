@@ -10,7 +10,7 @@ function Oauth2Buttons() {
       <div className="space-y-3">
         <NavLink
           to={`${
-            import.meta.env.VITE_BASE_URL || "http://localhost:8082"
+            import.meta.env.VITE_BASE_URL || "http://localhost:8083"
           }/oauth2/authorization/google`}
           className={"block"}
         >
@@ -37,7 +37,7 @@ function Oauth2Buttons() {
         </NavLink>
         <NavLink
           to={`${
-            import.meta.env.VITE_BASE_URL || "http://localhost:8082"
+            import.meta.env.VITE_BASE_URL || "http://localhost:8083"
           }/oauth2/authorization/github`}
           className={"block"}
         >
