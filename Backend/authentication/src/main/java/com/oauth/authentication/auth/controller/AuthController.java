@@ -101,7 +101,7 @@ public class AuthController {
                        refreshTokenRepo.save(rt);
                    });
                }
-           } catch (JwtException _) {
+           } catch (JwtException e) {
 
            }
         });
