@@ -41,12 +41,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         String header=request.getHeader(HttpHeaders.AUTHORIZATION);
         logger.info("Authentication header: {}",header);
-        System.out.println(header);
         try {
         if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             logger.info("Authentication token: {}",token);
-            System.out.println(token);
             if (token.startsWith("{") || token.contains("accessToken")) {
                 logger.warn("Invalid Authorization header format");
                 filterChain.doFilter(request, response);

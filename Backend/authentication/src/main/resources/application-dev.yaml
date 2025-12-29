@@ -2,7 +2,7 @@ server:
   port: 8082
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: info
 #  OAuth2 config
 spring:
   security:
@@ -28,21 +28,21 @@ security:
   jwt:
     secret: ${JWT_SECRET:ejfghGFegfGEFUWFGEFGGHUHG8hvhvefhgjsrhgerjgfdbdfb;FJYGEFYGJHABFhjgefyjegfyuEFHAEFJHJBFARHGGKABHAHJSVFHEJSVFHJEHFVJHSAVCHJACdsgfsdyg$jsfbhfbdhj}
     issuer: ${JWT_ISSUER:api.substring.com}
-    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:3600}
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:600}
     refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:86400}
     refresh-token-cookie-name: ${JWT_REFRESH_COOKIE_NAME:refreshToken}
     cookie-secure: ${JWT_COOKIE_SECURE:true}
     cookie-http-only: ${JWT_COOKIE_HTTP_ONLY:true}
-    cookie-same-site: ${JWT_COOKIE_SAME_SITE:lax}
-    cookie-domain: ${JWT_COOKIE_DOMAIN:localhost}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:None}
+    cookie-domain: ${JWT_COOKIE_DOMAIN:}
 
 app:
   cors:
-    ui-url: http://localhost:5173
+    ui-url: https://swarajreactauthapplication.netlify.app
   auth:
     frontend:
-      success-redirect: http://localhost:5173/auth/success
-      failure-redirect: http://localhost:5173/auth/failure
+      success-redirect: https://swarajreactauthapplication.netlify.app/oauth/success
+      failure-redirect: https://swarajreactauthapplication.netlify.app/oauth/failure
 
 
 

@@ -1,7 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShieldCheck, Lock, Key, Cloud, Github, Chrome } from "lucide-react";
-import { motion ,type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import useAuth from "@/auth/Store";
+import { useNavigate } from "react-router";
 
 /* ================= ANIMATIONS ================= */
 
@@ -16,7 +18,7 @@ const fadeUp: Variants = {
       ease: [0.16, 1, 0.3, 1], // cubic-bezier (easeOut)
     },
   },
-}
+};
 const stagger = {
   visible: { transition: { staggerChildren: 0.15 } },
 };
@@ -51,9 +53,12 @@ const steps = [
   },
 ];
 
+
 /* ================= PAGE ================= */
 
 export default function Home() {
+  const navigate = useNavigate();
+const checkLogin = useAuth((state) => state?.checkLogin);
   return (
     <div className="relative min-h-screen bg-background text-foreground overflow-hidden">
       {/* ===== Animated Gradient Background ===== */}
@@ -211,7 +216,17 @@ export default function Home() {
         </p>
 
         <motion.div whileHover={{ scale: 1.08 }}>
-          <Button size="lg">Start Building Now</Button>
+          <Button size="lg" onClick={()=>{
+            navigate(checkLogin()? "/dashboard" : "/login")
+
+            // if(checkLogin()){
+            //      navigate("/dashboard")
+            // }else{
+            //   navigate("/login")
+            // }
+          }}>
+            Start Building Now
+          </Button>
         </motion.div>
       </motion.section>
 

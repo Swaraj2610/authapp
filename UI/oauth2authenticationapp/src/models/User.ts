@@ -7,5 +7,5 @@ export default interface User {
     image?: string;
     updatedAt?: string;
     createdAt?: string;
-    provider: string;
+    provide?: string;
 }

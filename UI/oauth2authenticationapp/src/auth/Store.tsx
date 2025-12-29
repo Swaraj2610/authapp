@@ -18,18 +18,24 @@ type Authstate = {
   login: (loginData: LoginData) => Promise<LoginResponseData>;
   logout: (silent?: boolean) => void;
   checkLogin: () => boolean | undefined;
+  changeLocalLoginData: (
+    accessToken: string,
+    user: User,
+    authstatus: boolean
+  ) => void;
 };
-
-// const stateCreatorDunction=
 
 // logic for global state
 const useAuth = create<Authstate>()(
   persist(
-   (set, get) => ({
+    (set, get) => ({
       accessToken: null,
       user: null,
       authstatus: false,
       authLoading: false,
+      changeLocalLoginData(accessToken, user, authstatus) {
+        set({ accessToken, user, authstatus });
+      },
       // login function
       login: async (loginData: LoginData) => {
         console.log("Started Login.....");
@@ -70,11 +76,12 @@ const useAuth = create<Authstate>()(
         return false;
       },
     }),
-    { name: Local_KEY ,
-        partialize: (state) => ({ 
-        accessToken: state.accessToken, 
-        user: { ...state.user, password: null }, 
-        authstatus: state.authstatus 
+    {
+      name: Local_KEY,
+      partialize: (state) => ({
+        accessToken: state.accessToken,
+        user: { ...state.user, password: null },
+        authstatus: state.authstatus,
       }),
     }
   )

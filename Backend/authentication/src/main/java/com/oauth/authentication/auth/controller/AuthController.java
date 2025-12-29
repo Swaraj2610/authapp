@@ -112,17 +112,19 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     @PostMapping("/refreshToken")
-    public ResponseEntity<TokenResponse> renewRefreshToken(@RequestBody RefreshTokenRequest tokenRequest,
+    public ResponseEntity<TokenResponse> renewRefreshToken(@CookieValue("refreshToken") String refreshToken,
                                                            HttpServletRequest request,
-                                                           HttpServletResponse response){
-        String refreshToken=redRefreshTokenFromRequest(tokenRequest.refreshToken(),request).orElseThrow(()-> new BadCredentialsException("refresh token missing"));
-        if(!jwtService.isRefreshToken(refreshToken))throw new BadCredentialsException("Invalid Refresh Token Type");
-        logger.info("Refresh token : {}",refreshToken);
-        logger.info("Refresh token body: {}", jwtService.extractClaims(refreshToken).toString());
-        Claims claims= jwtService.extractClaims(refreshToken);
+                                                           HttpServletResponse response) throws InterruptedException {
+//        Thread.sleep(5000);
+
+        String refreshTokenCookie=redRefreshTokenFromRequest(refreshToken,request).orElseThrow(()-> new BadCredentialsException("refresh token missing"));
+        if(!jwtService.isRefreshToken(refreshTokenCookie))throw new BadCredentialsException("Invalid Refresh Token Type");
+        logger.info("Refresh token : {}",refreshTokenCookie);
+        logger.info("Refresh token body: {}", jwtService.extractClaims(refreshTokenCookie).toString());
+        Claims claims= jwtService.extractClaims(refreshTokenCookie);
         String jti=claims.getId();
         logger.info("Refresh JTI: {}", jti);
-        UUID uuid=jwtService.getUserId(refreshToken);
+        UUID uuid=jwtService.getUserId(refreshTokenCookie);
 
        RefreshToken storedToken= refreshTokenRepo.findByJti(jti)
                .orElseThrow(()->new BadCredentialsException("Invalid Credentials username or password"));

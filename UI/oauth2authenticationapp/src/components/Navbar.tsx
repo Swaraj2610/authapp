@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { motion } from "framer-motion";
 import useAuth from "@/auth/Store";
 
@@ -8,7 +8,8 @@ function Navbar() {
   const checkLogin = useAuth((state) => state.checkLogin);
   const user=useAuth((state)=>state.user);
   const logout=useAuth((state)=>state.logout);
-  
+  const navigate=useNavigate();
+
   // console.log("Navbar User:",user);
   return (
     <motion.nav
@@ -44,9 +45,10 @@ function Navbar() {
         <div className="flex items-center gap-5">
           {checkLogin() ? (
             <>
-             <NavItem to="#!">{user?.name}</NavItem>
+              <NavLink to={"/dashboard"}>Dashboard</NavLink>
+             <NavLink to={"/dashboard/profile"}>{user?.name}</NavLink>
               {/* ===== Login (Ghost + Glow Hover) ===== */}
-              <NavLink to="/login">
+              {/* <NavLink to="/login"> */}
                 <Button
                   size="sm"
                   variant="ghost"
@@ -61,11 +63,14 @@ function Navbar() {
                 after:opacity-0
                 hover:after:opacity-100
               "
-              onClick={() => logout()}
+              onClick={() => {
+                logout()
+                navigate("/")}
+              }
                 >
                   Logout
                 </Button>
-              </NavLink>
+              {/* </NavLink> */}
             </>
             ) : (
             <>

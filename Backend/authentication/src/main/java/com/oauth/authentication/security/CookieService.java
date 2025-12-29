@@ -48,9 +48,9 @@ public class CookieService {
                 .maxAge(maxAge)
                 .sameSite(cookieSameSite);
 
-       if(StringUtils.hasText(cookieDomain)){
-           responseCookieBuilder.domain(cookieDomain);
-       }
+//       if(StringUtils.hasText(cookieDomain)){
+//           responseCookieBuilder.domain(cookieDomain);
+//       }
 
        var responseCookie=responseCookieBuilder.build();
         logger.info("cookie resp: {}",responseCookie.toString());

@@ -3,6 +3,7 @@ package com.oauth.authentication.auth.service.impl;
 import com.oauth.authentication.auth.dto.Provider;
 import com.oauth.authentication.auth.dto.UserDto;
 import com.oauth.authentication.auth.entity.User;
+import com.oauth.authentication.auth.repository.RefreshTokenRepo;
 import com.oauth.authentication.auth.repository.UserRepository;
 import com.oauth.authentication.auth.service.UserService;
 import com.oauth.authentication.auth.utility.UserHelper;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final RefreshTokenRepo refreshTokenRepo;
 
     @Override
     @Transactional
@@ -60,6 +62,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(String userId) {
         User user = userRepository.findById(UserHelper.parseUUID(userId)).orElseThrow(() -> new ResourceNotFoundException("User not found with give ID"));
+        refreshTokenRepo.deleteByUserId(user.getId());
         userRepository.delete(user);
     }
 
