@@ -4,7 +4,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8083/api/v1",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://authentication-production-7079.up.railway.app/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
