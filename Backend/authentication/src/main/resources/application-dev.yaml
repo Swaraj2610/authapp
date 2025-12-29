@@ -10,20 +10,21 @@ spring:
       client:
         registration:
           google:
-            client-id: ${GOOGLE_CLIENT_ID:TEST-CLIENT-ID}
-            client-secret:  ${GOOGLE_CLIENT_SECRET:TEST-CLIENT-SECRET}
+            client-id: ${GOOGLE_CLIENT_ID:TEST_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET:TEST_SECRET}
             scope:
               - openid
               - profile
               - email
-#            redirect-uri: http://localhost:8082/login/oauth2/code/google
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
           github:
-            client-id: ${GITHUB_CLIENT_ID:TEST-CLIENT-ID}
-            client-secret: ${GITHUB_CLIENT_SECRET:TEST-CLIENT-SECRET}
+            client-id: ${GITHUB_CLIENT_ID:TEST_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET:TEST_SECRET}
             scope:
               - read:user
               - user:email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
   datasource:
     url: jdbc:postgresql://localhost:5432/authapplicatiodb
     username: postgres
@@ -54,11 +55,11 @@ security:
 
 app:
   cors:
-    ui-url: https://swarajreactauthapplication.netlify.app
+    ui-url: http://localhost:5173
   auth:
     frontend:
-      success-redirect: https://swarajreactauthapplication.netlify.app/oauth/success
-      failure-redirect: https://swarajreactauthapplication.netlify.app/oauth/failure
+      success-redirect: http://localhost:5173/oauth/success
+      failure-redirect: http://localhost:5173//oauth/failure
 
 
 
