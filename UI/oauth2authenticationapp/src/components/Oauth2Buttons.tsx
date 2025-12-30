@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "./ui/button";
-import { Github } from "lucide-react";
+import { FaGithub  } from "react-icons/fa";
 import { NavLink } from "react-router";
 
 function Oauth2Buttons() {
@@ -41,21 +41,21 @@ function Oauth2Buttons() {
           }/oauth2/authorization/github`}
           className={"block"}
         >
-          <motion.div whileHover={{ y: -2 }}>
-            <Button
-              type="button"
-              variant="outline"
-              className=" cursor-pointer
+        <motion.div whileHover={{ y: -2 }}>
+          <Button
+            type="button"
+            variant="outline"
+            className=" cursor-pointer
                       h-10 w-full flex gap-2 text-sm
                       transition-all
                       hover:border-primary hover:text-primary
                       hover:shadow-sm
                     "
-            >
-              <Github className="h-4 w-4" />
-              Continue with GitHub
-            </Button>
-          </motion.div>
+          >
+            <FaGithub className="h-4 w-4" />
+            Continue with GitHub
+          </Button>
+        </motion.div>
         </NavLink>
       </div>
     </div>
